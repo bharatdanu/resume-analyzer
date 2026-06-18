@@ -1,7 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { api } from "../loginandregister/api";
 
 function ResumeAnalyzer() {
   const [file, setFile] = useState(null);
@@ -35,8 +35,8 @@ function ResumeAnalyzer() {
       setError("");
       setAnalysis(null);
 
-      const response = await axios.post(
-        "http://localhost:8000/api/analyze-resume/",
+      const response = await api.post(
+        "/api/analyze-resume/",
         formData,
         {
           headers: {

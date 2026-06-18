@@ -13,21 +13,37 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / ".env")
+
+
+def env_list(name, default=None):
+    value = os.getenv(name)
+    if not value:
+        return default or []
+    return [item.strip() for item in value.split(",") if item.strip()]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-y@d#9=lmv()3887w&##8lx+0$f1-tj*owd&+g!%96#o6c$e&-)'
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    'django-insecure-y@d#9=lmv()3887w&##8lx+0$f1-tj*owd&+g!%96#o6c$e&-)'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "pbl2442.pythonanywhere.com",
+] + env_list("ALLOWED_HOSTS")
 
 
 # Application definition
@@ -124,7 +140,12 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://resume-analyzer-jet-one.vercel.app",
+] + env_list("CORS_ALLOWED_ORIGINS")
+
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME' : timedelta(hours=1),
@@ -132,9 +153,5 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS' : False,
 }
 
-
-from dotenv import load_dotenv
-
-load_dotenv()
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")

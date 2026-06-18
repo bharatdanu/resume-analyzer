@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 export const api = axios.create({
-    baseURL: "http://127.0.0.1:8000",
+    baseURL: process.env.REACT_APP_API_URL || "https://pbl2442.pythonanywhere.com",
 });
 
 const authUrls = ["/gettoken/", "/refresh/", "/register/"];
@@ -34,7 +34,7 @@ api.interceptors.response.use(
             try {
                 const refresh = localStorage.getItem("refresh");
 
-                const res = await axios.post("http://127.0.0.1:8000/refresh/", {
+                const res = await api.post("/refresh/", {
                     refresh,
                 });
 
