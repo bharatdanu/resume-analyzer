@@ -146,6 +146,10 @@ CORS_ALLOWED_ORIGINS = [
     "https://resume-analyzer-jet-one.vercel.app",
 ] + env_list("CORS_ALLOWED_ORIGINS")
 
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://resume-analyzer(-[a-z0-9]+)*\.vercel\.app$",
+]
+
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 SIMPLE_JWT = {

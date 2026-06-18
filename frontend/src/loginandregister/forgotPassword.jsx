@@ -43,7 +43,17 @@ export default function ForgotPassword() {
         }
         catch (error) {
             const detail = error.response?.data?.error;
-            setError(Array.isArray(detail) ? detail.join(" ") : detail || "Password reset failed.");
+            if (Array.isArray(detail)) {
+                setError(detail.join(" "));
+            } else if (detail) {
+                setError(detail);
+            } else if (error.response?.status === 404) {
+                setError("Password reset endpoint was not found. Please update and reload the backend.");
+            } else if (!error.response) {
+                setError("Cannot reach the backend. Check the backend URL and CORS settings.");
+            } else {
+                setError("Password reset failed. Please check the account details.");
+            }
         }
         finally {
             setLoading(false);
