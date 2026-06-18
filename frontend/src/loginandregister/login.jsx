@@ -104,7 +104,7 @@ export default function Login() {
                             </div>
 
                             <div className="d-flex justify-content-end align-items-center mb-4">
-                                <button type="button" className="btn btn-link p-0 text-decoration-none">Forgot password?</button>
+                                <Link to="/forgot-password" className="btn btn-link p-0 text-decoration-none">Forgot password?</Link>
                             </div>
 
                             <button type="submit" className="btn btn-primary w-100 fw-semibold">

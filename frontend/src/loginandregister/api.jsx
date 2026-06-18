@@ -5,7 +5,7 @@ export const api = axios.create({
     baseURL: process.env.REACT_APP_API_URL || "https://pbl2442.pythonanywhere.com",
 });
 
-const authUrls = ["/gettoken/", "/refresh/", "/register/"];
+const authUrls = ["/gettoken/", "/refresh/", "/register/", "/forgot-password/"];
 
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem("access");

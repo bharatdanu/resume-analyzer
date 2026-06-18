@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import Login from './loginandregister/login';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Register from './loginandregister/register';
+import ForgotPassword from './loginandregister/forgotPassword';
 import Analyser from './Dashboard/analyser';
 import ProtectedRoute from './Dashboard/ProtectedRoute';
 import { ToastContainer } from "react-toastify";
@@ -21,6 +22,10 @@ const allRouters = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
   },
   {
     path: "/dashboard",
