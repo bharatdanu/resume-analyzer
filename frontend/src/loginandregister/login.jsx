@@ -103,11 +103,7 @@ export default function Login() {
                                 </div>
                             </div>
 
-                            <div className="d-flex justify-content-between align-items-center mb-4">
-                                <div className="form-check">
-                                    <input type="checkbox" id="remember" name="remember" className="form-check-input" />
-                                    <label htmlFor="remember" className="form-check-label">Remember me</label>
-                                </div>
+                            <div className="d-flex justify-content-end align-items-center mb-4">
                                 <button type="button" className="btn btn-link p-0 text-decoration-none">Forgot password?</button>
                             </div>
 
