@@ -29,7 +29,7 @@ Resume:
 """
 
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model="openai/gpt-oss-20b",
         messages=[
             {"role": "system", "content": "Return ONLY valid JSON."},
             {"role": "user", "content": prompt},
@@ -50,5 +50,4 @@ Resume:
             "improvements": [],
             "skills_detected": [],
             "ats_score": 50,
-            "job_match_score": 50
         }
