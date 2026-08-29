@@ -123,14 +123,6 @@ function ResumeAnalyzer() {
                           </div>
                         </div>
                       </div>
-                      <div className="col-12 col-md-6">
-                        <div className="card h-100">
-                          <div className="card-body">
-                            <p className="text-secondary fw-semibold mb-1">Match</p>
-                            <p className="h4 fw-bold mb-0">{analysis.job_match_score}/100</p>
-                          </div>
-                        </div>
-                      </div>
                     </div>
                   </section>
 

@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .utils import extract_resume_text
-from .api_settings import analyze_resume_with_ai
+from .api_settings import ResumeAnalysisServiceError, analyze_resume_with_ai
 
 
 class AnalyzeResumeView(APIView):
@@ -35,8 +35,14 @@ class AnalyzeResumeView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        except Exception as e:
+        except ResumeAnalysisServiceError as error:
             return Response(
-                {"error": "Resume analysis failed", "details": str(e)},
+                {"error": str(error)},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
+        except Exception:
+            return Response(
+                {"error": "Resume analysis failed. Please try again later."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
