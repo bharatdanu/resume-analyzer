@@ -115,7 +115,7 @@ function ResumeAnalyzer() {
                   <section className="mb-4">
                     <h3 className="h6 fw-bold mb-3">Scores</h3>
                     <div className="row g-3">
-                      <div className="col-12 col-md-6">
+                      <div className="col-12">
                         <div className="card h-100">
                           <div className="card-body">
                             <p className="text-secondary fw-semibold mb-1">ATS</p>
