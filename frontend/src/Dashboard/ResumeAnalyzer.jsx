@@ -3,6 +3,42 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../loginandregister/api";
 
+const LIST_FIELDS = ["strengths", "weaknesses", "improvements", "skills_detected"];
+
+function parseEmbeddedAnalysis(summary) {
+  if (typeof summary !== "string") {
+    return null;
+  }
+
+  const jsonText = summary
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/, "");
+
+  try {
+    const parsed = JSON.parse(jsonText);
+    return parsed && typeof parsed === "object" && typeof parsed.summary === "string"
+      ? parsed
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function normalizeAnalysis(analysis) {
+  const normalized = parseEmbeddedAnalysis(analysis?.summary) || analysis || {};
+  const score = Number(normalized.ats_score);
+
+  return {
+    ...normalized,
+    summary: typeof normalized.summary === "string" ? normalized.summary : "No summary was returned.",
+    ats_score: Number.isFinite(score) ? Math.max(0, Math.min(100, Math.round(score))) : 0,
+    ...Object.fromEntries(
+      LIST_FIELDS.map((field) => [field, Array.isArray(normalized[field]) ? normalized[field] : []])
+    ),
+  };
+}
+
 function ResumeAnalyzer() {
   const [file, setFile] = useState(null);
   const [analysis, setAnalysis] = useState(null);
@@ -45,7 +81,7 @@ function ResumeAnalyzer() {
         }
       );
 
-      setAnalysis(response.data.analysis);
+      setAnalysis(normalizeAnalysis(response.data.analysis));
     } catch (err) {
       setError(
         err.response?.data?.error || "Something went wrong. Please try again."
