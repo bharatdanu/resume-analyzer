@@ -7,6 +7,8 @@ from openai import APIConnectionError, APIStatusError, AuthenticationError, Open
 
 logger = logging.getLogger(__name__)
 
+ANALYSIS_LIST_FIELDS = ("strengths", "weaknesses", "improvements", "skills_detected")
+
 
 class ResumeAnalysisServiceError(Exception):
     """A safe error shown when the AI service cannot analyze a resume."""
@@ -20,6 +22,37 @@ def _get_client():
             "backend/.env, then restart the Django server."
         )
     return OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
+
+
+def _parse_analysis(content):
+    """Normalize an LLM response into the shape expected by the frontend."""
+    cleaned_content = content.strip()
+
+    # Models occasionally wrap otherwise valid JSON in a Markdown fence.
+    if cleaned_content.startswith("```") and cleaned_content.endswith("```"):
+        cleaned_content = cleaned_content.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
+
+    try:
+        analysis = json.loads(cleaned_content)
+    except json.JSONDecodeError as error:
+        logger.warning("Groq returned non-JSON analysis: %s", content[:200])
+        raise ResumeAnalysisServiceError(
+            "The AI analysis service returned an invalid response. Please try again."
+        ) from error
+
+    if not isinstance(analysis, dict) or not isinstance(analysis.get("summary"), str):
+        raise ResumeAnalysisServiceError("The AI analysis service returned an invalid response. Please try again.")
+
+    for field in ANALYSIS_LIST_FIELDS:
+        if not isinstance(analysis.get(field), list):
+            analysis[field] = []
+
+    try:
+        analysis["ats_score"] = max(0, min(100, round(float(analysis.get("ats_score", 0)))))
+    except (TypeError, ValueError):
+        analysis["ats_score"] = 0
+
+    return analysis
 
 
 def analyze_resume_with_ai(resume_text):
@@ -73,15 +106,4 @@ Resume:
     if not content:
         raise ResumeAnalysisServiceError("The AI analysis service returned an empty response. Please try again.")
 
-    try:
-        analysis = json.loads(content)
-    except json.JSONDecodeError as error:
-        logger.warning("Groq returned non-JSON analysis: %s", content[:200])
-        raise ResumeAnalysisServiceError(
-            "The AI analysis service returned an invalid response. Please try again."
-        ) from error
-
-    if not isinstance(analysis, dict):
-        raise ResumeAnalysisServiceError("The AI analysis service returned an invalid response. Please try again.")
-
-    return analysis
+    return _parse_analysis(content)
